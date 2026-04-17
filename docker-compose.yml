@@ -1,0 +1,57 @@
+version: '3.9'
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  node-a:
+    build:
+      context: .
+      dockerfile: src/DistributedCache.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CacheCluster__NodeId=node-a
+      - CacheCluster__ReplicationFactor=2
+      - CacheCluster__Peers__0=node-a=http://node-a:8080
+      - CacheCluster__Peers__1=node-b=http://node-b:8080
+      - CacheCluster__Peers__2=node-c=http://node-c:8080
+      - ConnectionStrings__Redis=redis:6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+
+  node-b:
+    build:
+      context: .
+      dockerfile: src/DistributedCache.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CacheCluster__NodeId=node-b
+      - CacheCluster__ReplicationFactor=2
+      - CacheCluster__Peers__0=node-a=http://node-a:8080
+      - CacheCluster__Peers__1=node-b=http://node-b:8080
+      - CacheCluster__Peers__2=node-c=http://node-c:8080
+      - ConnectionStrings__Redis=redis:6379
+    ports:
+      - "8081:8080"
+    depends_on:
+      - redis
+
+  node-c:
+    build:
+      context: .
+      dockerfile: src/DistributedCache.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CacheCluster__NodeId=node-c
+      - CacheCluster__ReplicationFactor=2
+      - CacheCluster__Peers__0=node-a=http://node-a:8080
+      - CacheCluster__Peers__1=node-b=http://node-b:8080
+      - CacheCluster__Peers__2=node-c=http://node-c:8080
+      - ConnectionStrings__Redis=redis:6379
+    ports:
+      - "8082:8080"
+    depends_on:
+      - redis
