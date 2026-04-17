@@ -1,6 +1,6 @@
 using DistributedCache.Api.Models;
 using DistributedCache.Api.Services;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,17 +14,10 @@ builder.Services
 var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 if (!string.IsNullOrWhiteSpace(redisConnectionString))
 {
-    builder.Services.AddStackExchangeRedisCache(options =>
-    {
-        options.Configuration = redisConnectionString;
-        options.InstanceName = "distributed-cache";
-    });
-}
-else
-{
-    builder.Services.AddDistributedMemoryCache();
+    builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnectionString));
 }
 
+builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient(nameof(PeerNodeClient));
 builder.Services.AddSingleton<ILocalCacheStore, LocalCacheStore>();
 builder.Services.AddSingleton<IPeerNodeClient, PeerNodeClient>();
