@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Redis Cluster Workbench</title>
+    <link rel="stylesheet" href="/app.css">
+    <script type="module" src="/app.js"></script>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero reveal">
+            <p class="eyebrow">Distributed Cache Demo</p>
+            <h1>Redis Cluster Workbench</h1>
+            <p class="hero-copy">
+                Exercise the StackExchange.Redis calls already used in this repo and inspect how the distributed cache
+                shards and replicates each key.
+            </p>
+            <div class="hero-strip">
+                <div>
+                    <span class="label">Current node</span>
+                    <strong id="heroNode">Loading...</strong>
+                </div>
+                <div>
+                    <span class="label">Storage mode</span>
+                    <strong id="heroStorage">Loading...</strong>
+                </div>
+                <div>
+                    <span class="label">Replication</span>
+                    <strong id="heroReplication">Loading...</strong>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <section class="panel control-panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Operations</p>
+                        <h2>Write, read, inspect</h2>
+                    </div>
+                    <button id="sampleButton" class="ghost-button" type="button">Load sample payload</button>
+                </div>
+
+                <form id="cacheForm" class="cache-form">
+                    <label>
+                        <span>Cache key</span>
+                        <input id="keyInput" name="key" type="text" autocomplete="off" spellcheck="false">
+                    </label>
+
+                    <label>
+                        <span>Value</span>
+                        <textarea id="valueInput" name="value" rows="7" spellcheck="false"></textarea>
+                    </label>
+
+                    <label>
+                        <span>TTL seconds</span>
+                        <input id="ttlInput" name="ttl" type="number" min="1" step="1" inputmode="numeric">
+                    </label>
+
+                    <div class="button-row">
+                        <button id="setButton" class="accent-button" type="button">SET</button>
+                        <button id="getButton" class="ghost-button" type="button">GET</button>
+                        <button id="deleteButton" class="ghost-button danger" type="button">DELETE</button>
+                        <button id="inspectButton" class="ghost-button" type="button">Refresh inspection</button>
+                    </div>
+                </form>
+
+                <p id="statusMessage" class="status-message" aria-live="polite">Booting dashboard...</p>
+            </section>
+
+            <section class="panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Runtime</p>
+                        <h2>Implemented StackExchange.Redis calls</h2>
+                    </div>
+                </div>
+
+                <div class="metric-grid">
+                    <article class="metric-card">
+                        <span class="label">Node count</span>
+                        <strong id="nodeCount">-</strong>
+                    </article>
+                    <article class="metric-card">
+                        <span class="label">Request timeout</span>
+                        <strong id="requestTimeout">-</strong>
+                    </article>
+                    <article class="metric-card">
+                        <span class="label">Library</span>
+                        <strong id="storageLibrary">-</strong>
+                    </article>
+                </div>
+
+                <div id="featureList" class="chip-list" aria-live="polite"></div>
+            </section>
+
+            <section class="panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Placement</p>
+                        <h2>Rendezvous hashing owners</h2>
+                    </div>
+                </div>
+                <div id="placementList" class="stack-list"></div>
+            </section>
+
+            <section class="panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Replica state</p>
+                        <h2>Owner replicas for the selected key</h2>
+                    </div>
+                </div>
+                <div id="replicaList" class="stack-list"></div>
+            </section>
+
+            <section class="panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Read path</p>
+                        <h2>Distributed GET result</h2>
+                    </div>
+                </div>
+                <div id="readResult" class="result-panel"></div>
+            </section>
+
+            <section class="panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Cluster</p>
+                        <h2>Known peers</h2>
+                    </div>
+                </div>
+                <div id="nodeList" class="stack-list"></div>
+            </section>
+
+            <section class="panel log-panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Trace</p>
+                        <h2>Operation log</h2>
+                    </div>
+                    <button id="clearLogButton" class="ghost-button" type="button">Clear log</button>
+                </div>
+                <ol id="activityLog" class="log-list" aria-live="polite"></ol>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

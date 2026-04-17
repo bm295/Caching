@@ -10,6 +10,7 @@ public sealed class DistributedCacheCoordinator
     private readonly ILocalCacheStore _localCacheStore;
     private readonly IPeerNodeClient _peerNodeClient;
     private readonly ILogger<DistributedCacheCoordinator> _logger;
+    private readonly IReadOnlyList<PeerNode> _nodes;
     private readonly RendezvousHashRing _ring;
     private readonly string _nodeId;
 
@@ -24,13 +25,37 @@ public sealed class DistributedCacheCoordinator
         _peerNodeClient = peerNodeClient;
         _logger = logger;
 
-        var nodes = ParsePeers(_options);
-        _ring = new RendezvousHashRing(nodes);
+        _nodes = ParsePeers(_options);
+        _ring = new RendezvousHashRing(_nodes);
         _nodeId = _options.NodeId;
     }
 
+    public IReadOnlyList<PeerNode> GetClusterNodes()
+        => _nodes;
+
     public IReadOnlyList<PeerNode> GetPlacement(string key)
         => _ring.GetResponsibleNodes(key, _options.ReplicationFactor);
+
+    public async Task<IReadOnlyList<ReplicaInspectionResult>> InspectReplicasAsync(string key, CancellationToken cancellationToken)
+    {
+        var owners = GetPlacement(key);
+
+        var tasks = owners.Select(async node =>
+        {
+            var entry = IsLocal(node)
+                ? await _localCacheStore.GetAsync(key, cancellationToken)
+                : await _peerNodeClient.GetAsync(node, key, cancellationToken);
+
+            return new ReplicaInspectionResult(
+                node.NodeId,
+                node.BaseAddress.ToString(),
+                IsLocal(node),
+                entry is not null,
+                entry?.Value);
+        });
+
+        return await Task.WhenAll(tasks);
+    }
 
     public async Task SetAsync(string key, string value, TimeSpan? ttl, CancellationToken cancellationToken)
     {

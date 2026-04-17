@@ -1,5 +1,6 @@
 using DistributedCache.Api.Models;
 using DistributedCache.Api.Services;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,11 +26,75 @@ builder.Services.AddSingleton<DistributedCacheCoordinator>();
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapGet("/health/live", () => Results.Ok(new
 {
     status = "ok",
     timestampUtc = DateTime.UtcNow
 }));
+
+app.MapGet("/demo/api/overview", (
+    DistributedCacheCoordinator coordinator,
+    IOptions<CacheClusterOptions> options,
+    IServiceProvider services) =>
+{
+    var clusterOptions = options.Value;
+    var usesRedis = services.GetService<IConnectionMultiplexer>() is not null;
+
+    return Results.Ok(new
+    {
+        nodeId = clusterOptions.NodeId,
+        replicationFactor = clusterOptions.ReplicationFactor,
+        requestTimeoutMilliseconds = clusterOptions.RequestTimeoutMilliseconds,
+        storageMode = usesRedis ? "redis" : "memory-fallback",
+        storageLibrary = usesRedis ? "StackExchange.Redis" : "IMemoryCache",
+        nodes = coordinator.GetClusterNodes()
+            .Select(node => new
+            {
+                node.NodeId,
+                url = node.BaseAddress.ToString(),
+                isCurrent = string.Equals(node.NodeId, clusterOptions.NodeId, StringComparison.OrdinalIgnoreCase)
+            }),
+        features = new[]
+        {
+            new
+            {
+                name = "ConnectionMultiplexer.Connect",
+                description = "Creates the shared Redis connection used by the local cache store."
+            },
+            new
+            {
+                name = "IDatabase.StringSetAsync",
+                description = "Writes string values with an optional TTL."
+            },
+            new
+            {
+                name = "IDatabase.StringGetAsync",
+                description = "Reads string values back from Redis."
+            },
+            new
+            {
+                name = "IDatabase.KeyDeleteAsync",
+                description = "Deletes cache entries by key."
+            }
+        }
+    });
+});
+
+app.MapGet("/demo/api/inspect/{key}", async (string key, DistributedCacheCoordinator coordinator, CancellationToken cancellationToken) =>
+{
+    var readResult = await coordinator.GetAsync(key, cancellationToken);
+    var replicas = await coordinator.InspectReplicasAsync(key, cancellationToken);
+
+    return Results.Ok(new
+    {
+        key,
+        readResult,
+        replicas
+    });
+});
 
 app.MapGet("/cluster/placement/{key}", (string key, DistributedCacheCoordinator coordinator) =>
 {
