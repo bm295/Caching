@@ -1,4 +1,4 @@
-namespace DistributedCache.Api.Models;
+namespace Caching.Framework.Models;
 
 public sealed class CacheClusterOptions
 {

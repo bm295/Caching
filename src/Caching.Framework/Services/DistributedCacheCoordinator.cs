@@ -1,8 +1,8 @@
-using DistributedCache.Api.Hashing;
-using DistributedCache.Api.Models;
+using Caching.Framework.Hashing;
+using Caching.Framework.Models;
 using Microsoft.Extensions.Options;
 
-namespace DistributedCache.Api.Services;
+namespace Caching.Framework.Services;
 
 public sealed class DistributedCacheCoordinator
 {

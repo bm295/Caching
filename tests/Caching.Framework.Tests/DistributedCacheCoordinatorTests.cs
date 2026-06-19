@@ -1,9 +1,9 @@
-using DistributedCache.Api.Models;
-using DistributedCache.Api.Services;
+using Caching.Framework.Models;
+using Caching.Framework.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace DistributedCache.Api.Tests;
+namespace Caching.Framework.Tests;
 
 public class DistributedCacheCoordinatorTests
 {

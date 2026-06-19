@@ -1,6 +1,6 @@
-using DistributedCache.Api.Models;
+using Caching.Framework.Models;
 
-namespace DistributedCache.Api.Services;
+namespace Caching.Framework.Services;
 
 public interface ILocalCacheStore
 {

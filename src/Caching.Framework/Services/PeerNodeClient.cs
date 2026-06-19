@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
-using DistributedCache.Api.Models;
+using Caching.Framework.Models;
 using Microsoft.Extensions.Options;
 
-namespace DistributedCache.Api.Services;
+namespace Caching.Framework.Services;
 
 public sealed class PeerNodeClient(
     IHttpClientFactory httpClientFactory,
