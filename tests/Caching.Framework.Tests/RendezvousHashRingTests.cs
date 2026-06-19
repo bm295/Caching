@@ -1,0 +1,35 @@
+using Caching.Framework.Distributed;
+
+namespace Caching.Framework.Tests;
+
+public sealed class RendezvousHashRingTests
+{
+    private static readonly CacheNode[] Nodes =
+    [
+        new("node-a", new Uri("http://node-a")),
+        new("node-b", new Uri("http://node-b")),
+        new("node-c", new Uri("http://node-c"))
+    ];
+
+    [Fact]
+    public void SameKeyReturnsStablePlacement()
+    {
+        var ring = new RendezvousHashRing(Nodes);
+
+        var first = ring.GetOwners("user:42", 2).Select(x => x.NodeId).ToArray();
+        var second = ring.GetOwners("user:42", 2).Select(x => x.NodeId).ToArray();
+
+        Assert.Equal(first, second);
+    }
+
+    [Fact]
+    public void PlacementHonorsReplicaCount()
+    {
+        var ring = new RendezvousHashRing(Nodes);
+
+        var owners = ring.GetOwners("order:100", 2);
+
+        Assert.Equal(2, owners.Count);
+        Assert.Equal(owners.Select(x => x.NodeId).Distinct().Count(), owners.Count);
+    }
+}
