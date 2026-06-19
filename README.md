@@ -9,8 +9,9 @@ A reusable .NET caching library designed to be packaged, licensed, and extended 
 - Region-aware keys for tenant, module, or bounded-context separation.
 - Per-entry TTL support with cache hit metadata.
 - Rendezvous-hash placement primitives for distributed cache providers.
+- A merged distributed cache HTTP demo/API host under `src/Caching.Framework` with peer replication, replica inspection, and Redis-backed local storage.
 - Dependency injection registration through `AddCachingFramework`.
-- Tests covering cache-aside behavior, regions, and deterministic distributed placement.
+- Tests covering cache-aside behavior, regions, distributed coordination, and deterministic distributed placement.
 
 ## Install from source
 
@@ -56,6 +57,17 @@ public sealed class CatalogService(ICacheClient cache)
             cancellationToken);
 }
 ```
+
+
+## Run the distributed cache demo/API
+
+The distributed cache API has been merged into `src/Caching.Framework`. You can run the three-node demo with Redis using Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+The sample nodes expose the cache API on `http://localhost:8080`, `http://localhost:8081`, and `http://localhost:8082`.
 
 ## Package for distribution
 

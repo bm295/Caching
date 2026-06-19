@@ -1,8 +1,8 @@
-using DistributedCache.Api.Models;
+using Caching.Framework.Models;
 using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis;
 
-namespace DistributedCache.Api.Services;
+namespace Caching.Framework.Services;
 
 public sealed class LocalCacheStore : ILocalCacheStore
 {

@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
-using DistributedCache.Api.Models;
+using Caching.Framework.Models;
 
-namespace DistributedCache.Api.Hashing;
+namespace Caching.Framework.Hashing;
 
 public sealed class RendezvousHashRing
 {

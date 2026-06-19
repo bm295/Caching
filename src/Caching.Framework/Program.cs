@@ -1,5 +1,5 @@
-using DistributedCache.Api.Models;
-using DistributedCache.Api.Services;
+using Caching.Framework.Models;
+using Caching.Framework.Services;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
