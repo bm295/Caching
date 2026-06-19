@@ -1,73 +1,73 @@
-# Distributed Cache Service
+# Caching Framework
 
-A production-style distributed cache API built with ASP.NET Core. It uses **Rendezvous Hashing** to shard keys across cache peers and replicates writes for resilience.
+A reusable .NET caching library designed to be packaged, licensed, and extended as a commercial caching framework.
 
-## Features
+## What is included
 
-- REST API for set/get/delete cache entries.
-- Rendezvous hashing for deterministic key placement.
-- Configurable replication factor.
-- Optional Redis-backed local store with in-memory fallback.
-- Peer-aware reads with automatic failover.
-- Unit tests for hashing and replication behavior.
+- `ICacheClient`: a small application-facing abstraction for `Set`, `Get`, `GetOrCreate`, and `Remove` workflows.
+- `MemoryCacheClient`: a production-ready in-process provider backed by `Microsoft.Extensions.Caching.Memory`.
+- Region-aware keys for tenant, module, or bounded-context separation.
+- Per-entry TTL support with cache hit metadata.
+- Rendezvous-hash placement primitives for distributed cache providers.
+- Dependency injection registration through `AddCachingFramework`.
+- Tests covering cache-aside behavior, regions, and deterministic distributed placement.
 
-## Quick start
+## Install from source
 
 ```bash
 dotnet restore
-dotnet run --project src/DistributedCache.Api
+dotnet build Caching.sln
 ```
 
-Set peers and local node ID using environment variables:
+## Register the framework
 
-- `CacheCluster__NodeId=node-a`
-- `CacheCluster__Peers__0=node-a=http://localhost:8080`
-- `CacheCluster__Peers__1=node-b=http://localhost:8081`
-- `CacheCluster__ReplicationFactor=2`
-- `ConnectionStrings__Redis=localhost:6379` (optional)
+```csharp
+using Caching.Framework.DependencyInjection;
+using Caching.Framework.Distributed;
 
-## Web demo
-
-The API now serves a browser-based dashboard at `/` that demonstrates the Redis calls already implemented in this repo:
-
-- `ConnectionMultiplexer.Connect`
-- `IDatabase.StringSetAsync`
-- `IDatabase.StringGetAsync`
-- `IDatabase.KeyDeleteAsync`
-
-From the dashboard you can:
-
-- Write values with an optional TTL.
-- Read and delete cache entries.
-- Inspect rendezvous-hash placement for a key.
-- View which owner replicas currently hold the value.
-- See whether the node is running against Redis or the in-memory fallback.
-
-For the full cluster demo, start the compose stack and open any node in the browser:
-
-```bash
-docker compose up --build
-```
-
-- `http://localhost:8080`
-- `http://localhost:8081`
-- `http://localhost:8082`
-
-## API
-
-- `PUT /cache/{key}`
-- `GET /cache/{key}`
-- `DELETE /cache/{key}`
-- `GET /cluster/placement/{key}`
-- `GET /demo/api/overview`
-- `GET /demo/api/inspect/{key}`
-- `GET /health/live`
-
-Payload for PUT:
-
-```json
+builder.Services.AddCachingFramework(options =>
 {
-  "value": "any string payload",
-  "ttlSeconds": 60
+    options.LocalNodeId = "node-a";
+    options.ReplicationFactor = 2;
+    options.Nodes =
+    [
+        new CacheNode("node-a", new Uri("https://cache-a.internal")),
+        new CacheNode("node-b", new Uri("https://cache-b.internal"))
+    ];
+});
+```
+
+## Use cache-aside in application code
+
+```csharp
+using Caching.Framework.Abstractions;
+
+public sealed class CatalogService(ICacheClient cache)
+{
+    public Task<Product> GetProductAsync(string sku, CancellationToken cancellationToken) =>
+        cache.GetOrCreateAsync(
+            $"product:{sku}",
+            token => LoadProductAsync(sku, token),
+            new CacheEntryOptions
+            {
+                Region = "catalog",
+                TimeToLive = TimeSpan.FromMinutes(10)
+            },
+            cancellationToken);
 }
 ```
+
+## Package for distribution
+
+```bash
+dotnet pack src/Caching.Framework/Caching.Framework.csproj -c Release
+```
+
+The project includes NuGet metadata so the generated package can be published to a private feed or marketplace after you add your final license, branding, documentation site, and support policy.
+
+## Roadmap for commercial hardening
+
+- Add Redis, SQL, and cloud cache provider packages that implement `ICacheClient`.
+- Add encryption, compression, stampede protection, metrics, and health checks.
+- Add signed packages and source-link metadata.
+- Add benchmarks and compatibility tests for supported .NET versions.
