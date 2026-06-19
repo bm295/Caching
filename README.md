@@ -60,10 +60,10 @@ public sealed class CatalogService(ICacheClient cache)
 ## Package for distribution
 
 ```bash
-dotnet pack src/Caching.Framework/Caching.Framework.csproj -c Release
+dotnet pack src/Caching.Framework/Caching.Framework.csproj -c Release -o ./artifacts/packages
 ```
 
-The project includes NuGet metadata so the generated package can be published to a private feed or marketplace after you add your final license, branding, documentation site, and support policy.
+The project includes NuGet metadata so the generated package can be published to a private feed or marketplace after you add your final license, branding, documentation site, and support policy. See [PACKAGING.md](PACKAGING.md) for step-by-step instructions for private feeds, local folder feeds, direct `.nupkg` delivery, versioning, and consumer setup.
 
 ## Roadmap for commercial hardening
 
