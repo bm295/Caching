@@ -14,11 +14,6 @@ This checklist breaks market-readiness work into very small, concrete tasks. Pre
 - [ ] Add a unit test named `ProductBrand_HasNonEmptyDisplayName`.
 - [ ] Add a unit test named `ProductBrand_HasNonEmptyTagline`.
 - [x] Update `src/Caching.Framework/Caching.Framework.csproj` with a final `PackageProjectUrl` value.
-- [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with a final `RepositoryUrl` value.
-- [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with `PackageTags`.
-- [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with `PackageIcon`.
-- [ ] Create `assets/package-icon.png`.
-- [ ] Add `assets/package-icon.png` to the NuGet package.
 
 ## Repository structure
 
