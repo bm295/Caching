@@ -6,6 +6,7 @@
     <Description>A composable .NET caching framework with in-memory storage, cache-aside helpers, and distributed rendezvous-hash placement.</Description>
     <Authors>Caching Framework Contributors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/caching-framework/caching</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
