@@ -4,13 +4,13 @@ This checklist breaks market-readiness work into very small, concrete tasks. Pre
 
 ## Product identity and package metadata
 
-- [ ] Create `src/Caching.Framework/Branding/ProductBrand.cs`.
-- [ ] Add a `public const string Name = "Caching.Framework"` field to `ProductBrand`.
-- [ ] Add a `public const string DisplayName = "Caching Framework"` field to `ProductBrand`.
-- [ ] Add a `public const string Tagline` field to `ProductBrand`.
-- [ ] Add a `public const string WebsiteUrl` field to `ProductBrand`.
-- [ ] Add a `public const string DocumentationUrl` field to `ProductBrand`.
-- [ ] Add a `public const string SupportUrl` field to `ProductBrand`.
+- [x] Create `src/Caching.Framework/Branding/ProductBrand.cs`.
+- [x] Add a `public const string Name = "Caching.Framework"` field to `ProductBrand`.
+- [x] Add a `public const string DisplayName = "Caching Framework"` field to `ProductBrand`.
+- [x] Add a `public const string Tagline` field to `ProductBrand`.
+- [x] Add a `public const string WebsiteUrl` field to `ProductBrand`.
+- [x] Add a `public const string DocumentationUrl` field to `ProductBrand`.
+- [x] Add a `public const string SupportUrl` field to `ProductBrand`.
 - [ ] Add a unit test named `ProductBrand_HasNonEmptyDisplayName`.
 - [ ] Add a unit test named `ProductBrand_HasNonEmptyTagline`.
 - [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with a final `PackageProjectUrl` value.
