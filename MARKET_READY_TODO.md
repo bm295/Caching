@@ -13,7 +13,7 @@ This checklist breaks market-readiness work into very small, concrete tasks. Pre
 - [x] Add a `public const string SupportUrl` field to `ProductBrand`.
 - [ ] Add a unit test named `ProductBrand_HasNonEmptyDisplayName`.
 - [ ] Add a unit test named `ProductBrand_HasNonEmptyTagline`.
-- [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with a final `PackageProjectUrl` value.
+- [x] Update `src/Caching.Framework/Caching.Framework.csproj` with a final `PackageProjectUrl` value.
 - [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with a final `RepositoryUrl` value.
 - [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with `PackageTags`.
 - [ ] Update `src/Caching.Framework/Caching.Framework.csproj` with `PackageIcon`.
