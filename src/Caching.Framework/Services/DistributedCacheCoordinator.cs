@@ -25,7 +25,7 @@ public sealed class DistributedCacheCoordinator
         _peerNodeClient = peerNodeClient;
         _logger = logger;
 
-        _nodes = ParsePeers(_options);
+        _nodes = PeerNodeParser.Parse(_options);
         _ring = new RendezvousHashRing(_nodes);
         _nodeId = _options.NodeId;
     }
@@ -130,27 +130,4 @@ public sealed class DistributedCacheCoordinator
 
     private bool IsLocal(PeerNode node)
         => string.Equals(node.NodeId, _nodeId, StringComparison.OrdinalIgnoreCase);
-
-    private static IReadOnlyList<PeerNode> ParsePeers(CacheClusterOptions options)
-    {
-        var peers = new List<PeerNode>();
-
-        foreach (var entry in options.Peers)
-        {
-            var parts = entry.Split('=', 2, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 2 || !Uri.TryCreate(parts[1], UriKind.Absolute, out var uri))
-            {
-                continue;
-            }
-
-            peers.Add(new PeerNode(parts[0], uri));
-        }
-
-        if (!peers.Any(p => string.Equals(p.NodeId, options.NodeId, StringComparison.OrdinalIgnoreCase)))
-        {
-            peers.Add(new PeerNode(options.NodeId, new Uri("http://localhost:8080")));
-        }
-
-        return peers;
-    }
 }

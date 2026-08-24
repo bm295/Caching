@@ -65,6 +65,33 @@ public class DistributedCacheCoordinatorTests
         Assert.Contains(replicas, r => r.NodeId == "node-c" && !r.IsLocalNode && r.HasValue && r.Value == "remote-c");
     }
 
+    [Fact]
+    public void GetClusterNodesSkipsMalformedPeersAndAddsLocalNode()
+    {
+        var options = Options.Create(new CacheClusterOptions
+        {
+            NodeId = "node-a",
+            ReplicationFactor = 3,
+            Peers =
+            [
+                "invalid-entry",
+                "node-b=http://node-b"
+            ]
+        });
+
+        var sut = new DistributedCacheCoordinator(
+            options,
+            new FakeLocalCacheStore(),
+            new FakePeerNodeClient(),
+            NullLogger<DistributedCacheCoordinator>.Instance);
+
+        var nodes = sut.GetClusterNodes();
+
+        Assert.Equal(2, nodes.Count);
+        Assert.Contains(nodes, node => node.NodeId == "node-a" && node.BaseAddress.ToString() == "http://localhost:8080/");
+        Assert.Contains(nodes, node => node.NodeId == "node-b" && node.BaseAddress.ToString() == "http://node-b/");
+    }
+
     private sealed class FakeLocalCacheStore : ILocalCacheStore
     {
         private readonly Dictionary<string, string> _items = new(StringComparer.Ordinal);
