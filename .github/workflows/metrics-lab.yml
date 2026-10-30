@@ -1,0 +1,12 @@
+name: Metrics Lab
+on: [push, pull_request]
+jobs:
+  metrics-lab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - run: dotnet test tests/Caching.MetricsLab.Tests/Caching.MetricsLab.Tests.csproj --configuration Release
+      - run: dotnet run --project samples/Caching.MetricsLab --configuration Release

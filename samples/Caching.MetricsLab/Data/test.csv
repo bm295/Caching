@@ -1,0 +1,11 @@
+key,actual,score
+test-1,1,0.92
+test-2,0,0.88
+test-3,1,0.78
+test-4,1,0.68
+test-5,0,0.58
+test-6,1,0.48
+test-7,0,0.38
+test-8,1,0.28
+test-9,0,0.18
+test-10,0,0.08
