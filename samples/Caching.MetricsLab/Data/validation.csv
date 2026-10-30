@@ -1,0 +1,11 @@
+key,actual,score
+validation-1,1,0.95
+validation-2,1,0.85
+validation-3,1,0.75
+validation-4,0,0.72
+validation-5,1,0.65
+validation-6,0,0.55
+validation-7,1,0.45
+validation-8,0,0.35
+validation-9,0,0.25
+validation-10,0,0.15

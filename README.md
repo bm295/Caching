@@ -83,3 +83,7 @@ The project includes NuGet metadata so the generated package can be published to
 - Add encryption, compression, stampede protection, metrics, and health checks.
 - Add signed packages and source-link metadata.
 - Add benchmarks and compatibility tests for supported .NET versions.
+
+## Precision, recall and F1 learning lab
+
+See [Caching.MetricsLab](samples/Caching.MetricsLab/README.md) for a standalone cache-prefetch classification lab, threshold policies, sample data, and tests.
